@@ -67,7 +67,7 @@ router.post('/:id/move', authenticate, async (req, res) => {
 router.post('/:id/invite', authenticate, async (req, res) => {
   try {
     const gameId = req.params.id;
-    const inviteLink = `http://localhost:3000/play/play-with-friend?gameId=${gameId}`;
+    const inviteLink = `http://localhost:3000/game_arena?gameId=${gameId}`;
     res.status(200).json({ inviteLink });
   } catch (error) {
     console.error('Error generating invite link:', error);
