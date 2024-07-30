@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+  backend:
+    build: ./backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - redis
+    environment:
+      - mongo_url=mongodb+srv://chess_game:1pd6BCKFpLdQmFT4@cluster0.nfhftd6.mongodb.net/chess_game?retryWrites=true&w=majority
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]

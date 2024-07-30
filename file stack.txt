@@ -1,0 +1,89 @@
+    my-chess-game/
+    ├── frontend/
+    │   ├── .next/
+    │   ├── node_modules/
+    │   ├── public/
+    │   │   ├── favicon.ico
+    │   ├── src/
+    │   │   ├── app/
+    │   │   │   ├── components/
+    │   │   │   │   ├── ChessGame.tsx
+    │   │   │   │   ├── ClientOnly.tsx
+    │   │   │   │   ├── landingPage.tsx
+    │   │   │   │   ├── MobileNavBar.tsx
+    │   │   │   │   ├── NavBar.tsx
+
+    |   |   |   |   |   ├──play/
+    |   |   │   │   │   ├── play-online/
+    |   |   │   │   │   │   ├── page.tsx
+    |   |   │   │   │   ├── play-with-friend/
+    |   |   │   │   │   │   ├── page.tsx
+    |   |   │   │   │   ├── play-with-computer/
+    │   │   │   |   │   ├── page.tsx
+    │   │   │   ├── settings/
+    │   │   │   │   ├── page.tsx
+    │   │   │   ├── how-to-play/
+    │   │   │   │   ├── page.tsx
+    │   │   │   ├── login/
+    │   │   │   │   ├── page.tsx
+    │   │   │   ├── sign-up/
+    │   │   │   │   ├── page.tsx
+    │   │   │   ├── logout/
+    │   │   │   │   ├── page.tsx
+    │   │   │   ├── css/
+    │   │   │   │   ├── LoginSignUp.css
+    │   │   │   ├── favicon/
+    │   │   │   ├── global.css
+    │   │   │   ├── layout.tsx
+    │   │   │   ├── page.tsx
+    │   │   ├── types/
+    │   │   │   ├── chess.d.ts
+    │   │   │   ├── react-color.d.ts
+    │   ├── next-env.d.ts
+    │   ├── next.config.mjs
+    │   ├── postcss.config.mjs
+    │   ├── tailwind.config.ts
+    │   ├── tsconfig.json
+    │   ├── Dockerfile
+    │   ├── .eslintrc.json
+    │   ├── .gitignore
+    │   ├── store.json
+    │   ├── package.json
+    │
+    ├── backend/
+    │   ├── controllers/
+    │   │   ├── userController.js
+    │   │   ├── gameController.js
+    │   ├── models/
+    │   │   ├── User.js
+    │   │   ├── Game.js
+    │   ├── routes/
+    │   │   ├── userRoutes.js
+    │   │   ├── gameRoutes.js
+    │   │   ├── graphqlRoutes.js
+    │   │   ├── grpcServer.js
+    │   │   ├── soapServer.js
+    │   ├── graphql/
+    │   │   ├── schema.js
+    │   │   ├── resolvers.js
+    │   ├── grpc/
+    │   │   ├── chess.proto
+    │   ├── soap/
+    │   │   ├── chess.wsdl
+    │   ├── server.js
+    │   ├── package.json
+    │   ├── .env
+    │
+    ├── redis/
+    │   ├── redis.conf
+    │
+    ├── kubernetes/
+    │   ├── deployment.yaml
+    │   ├── service.yaml
+    │
+    ├── scripts/
+    │   ├── deploy.sh
+    │   ├── setup.sh
+    │
+    ├── docker-compose.yml
+    ├── README.md

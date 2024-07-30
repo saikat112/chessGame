@@ -1,0 +1,85 @@
+<definitions name="ChessService"
+    targetNamespace="http://www.example.org/chess"
+    xmlns:tns="http://www.example.org/chess"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <message name="CreateGameRequest"/>
+
+    <message name="CreateGameResponse">
+        <part name="game" element="tns:Game"/>
+    </message>
+
+    <message name="JoinGameRequest">
+        <part name="gameId" type="xsd:string"/>
+        <part name="player" type="xsd:string"/>
+    </message>
+
+    <message name="JoinGameResponse">
+        <part name="game" element="tns:Game"/>
+    </message>
+
+    <message name="MakeMoveRequest">
+        <part name="gameId" type="xsd:string"/>
+        <part name="from" type="xsd:string"/>
+        <part name="to" type="xsd:string"/>
+        <part name="piece" type="xsd:string"/>
+    </message>
+
+    <message name="MakeMoveResponse">
+        <part name="game" element="tns:Game"/>
+    </message>
+
+    <portType name="ChessPortType">
+        <operation name="CreateGame">
+            <input message="tns:CreateGameRequest"/>
+            <output message="tns:CreateGameResponse"/>
+        </operation>
+        <operation name="JoinGame">
+            <input message="tns:JoinGameRequest"/>
+            <output message="tns:JoinGameResponse"/>
+        </operation>
+        <operation name="MakeMove">
+            <input message="tns:MakeMoveRequest"/>
+            <output message="tns:MakeMoveResponse"/>
+        </operation>
+    </portType>
+
+    <binding name="ChessBinding" type="tns:ChessPortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="CreateGame">
+            <soap:operation soapAction="createGame"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="JoinGame">
+            <soap:operation soapAction="joinGame"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="MakeMove">
+            <soap:operation soapAction="makeMove"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <service name="ChessService">
+        <port name="ChessPort" binding="tns:ChessBinding">
+            <soap:address location="http://localhost:5000/wsdl"/>
+        </port>
+    </service>
+</definitions>

@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package chess;
+
+service ChessService {
+  rpc CreateGame (CreateGameRequest) returns (Game);
+  rpc JoinGame (JoinGameRequest) returns (Game);
+  rpc MakeMove (MakeMoveRequest) returns (Game);
+}
+
+message CreateGameRequest {}
+
+message JoinGameRequest {
+  string gameId = 1;
+  string player = 2;
+}
+
+message MakeMoveRequest {
+  string gameId = 1;
+  string from = 2;
+  string to = 3;
+  string piece = 4;
+}
+
+message Game {
+  string id = 1;
+  repeated string players = 2;
+  repeated Move moves = 3;
+  string status = 4;
+  string result = 5;
+}
+
+message Move {
+  string from = 1;
+  string to = 2;
+  string piece = 3;
+}

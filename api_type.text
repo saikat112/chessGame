@@ -1,0 +1,14 @@
+Frontend:
+
+Uses REST API for initial game state loading and user management.
+Uses GraphQL for efficient and flexible data fetching.
+Establishes WebSocket connections for real-time game updates.
+
+
+Backend:
+
+REST API endpoints for standard operations.
+GraphQL endpoint for complex data queries.
+WebSocket server for real-time communication.
+gRPC services for internal microservices communication.
+SOAP services if integrating with legacy systems or requiring specific enterprise features.
