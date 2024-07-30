@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const blacklist = require('../utils/blacklist'); // Import the blacklist utility
+const blacklist = require('../utils/blacklist');
 
 exports.registerUser = async (req, res) => {
   try {
