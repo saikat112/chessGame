@@ -11,15 +11,15 @@ const LandingPage = () => {
   const router = useRouter();
 
   const handlePlayOnlineClick = () => {
-    router.push('/play/play_online'); // Adjust the path based on your routing setup
+    router.push('/play/play_online');
   };
 
   const handlePlayWithFriendClick = () => {
-    router.push('/play/play_with_friend'); // Adjust the path based on your routing setup
+    router.push('/play/play_with_friend');
   };
 
   const handlePlayWithComputerClick = () => {
-    router.push('/play/play_with_computer'); // Adjust the path based on your routing setup
+    router.push('/play/play_with_computer');
   };
 
   return (

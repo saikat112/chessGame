@@ -21,7 +21,7 @@ const PlayWithFriendPage: React.FC = () => {
 
   const createGame = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/games');
+      const response = await axios.post('/games');
       setGameId(response.data._id);
     } catch (error) {
       console.error('Error creating game:', error);
@@ -31,7 +31,7 @@ const PlayWithFriendPage: React.FC = () => {
   const generateInviteLink = async () => {
     if (!gameId) return;
     try {
-      const response = await axios.post(`http://localhost:5000/api/games/${gameId}/invite`);
+      const response = await axios.post(`/games/${gameId}/invite`);
       setInviteLink(response.data.inviteLink);
     } catch (error) {
       console.error('Error generating invite link:', error);
@@ -40,7 +40,7 @@ const PlayWithFriendPage: React.FC = () => {
 
   const joinGame = async () => {
     try {
-      const response = await axios.post(`http://localhost:5000/api/games/${gameId}/join`, { player });
+      const response = await axios.post(`/games/${gameId}/join`, { player });
       setIsJoined(true);
     } catch (error) {
       console.error('Error joining game:', error);

@@ -3,8 +3,9 @@
 import * as React from 'react';
 import { Avatar, Menu, MenuItem, ListItemIcon } from '@mui/material';
 import { MoreVertical, ChevronLast, ChevronFirst, Edit, LogOut } from 'lucide-react';
-import { useContext, createContext, useState, ReactNode, MouseEvent } from 'react';
+import { useState, ReactNode, MouseEvent, createContext } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUser } from '../../context/UserContext'; // Ensure correct import
 
 interface SidebarContextProps {
   expanded: boolean;
@@ -19,6 +20,7 @@ const SidebarContext = createContext<SidebarContextProps | undefined>(undefined)
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const [expanded, setExpanded] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { user, setUser } = useUser(); // Destructure both user and setUser
   const router = useRouter();
 
   const handleMenuClick = (event: MouseEvent<SVGSVGElement>) => {
@@ -33,15 +35,13 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   };
 
   const handleLogout = () => {
-    // Add logout functionality here
-    console.log('Logout clicked');
-    router.push('/logout'); // Navigate to logout path
+    localStorage.removeItem('token'); // Remove token from local storage
+    setUser(null); // Clear user context
+    router.push('/login'); // Navigate to login page
     handleMenuClose();
   };
 
   const handleProfileEdit = () => {
-    // Add profile edit functionality here
-    console.log('Edit Profile clicked');
     router.push('/profile-edit'); // Navigate to profile edit path
     handleMenuClose();
   };
@@ -68,15 +68,15 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         </SidebarContext.Provider>
 
         <div className="border-t flex p-3">
-          <Avatar alt="Saikat" src="/profile-icon.png" sx={{ width: 40, height: 40 }} />
+          <Avatar alt={user?.username} src={user?.avatar || '/profile-icon.png'} sx={{ width: 40, height: 40 }} />
           <div
             className={`flex justify-between items-center overflow-hidden transition-all ${
               expanded ? 'w-52 ml-3' : 'w-0'
             }`}
           >
             <div className="leading-4">
-              <h4 className="font-semibold">Saikat manna</h4>
-              <span className="text-xs text-gray-600">Saikatmanna112@gmail.com</span>
+              <h4 className="font-semibold">{user?.username}</h4>
+              <span className="text-xs text-gray-600">{user?.email}</span>
             </div>
             <MoreVertical size={20} className="cursor-pointer" aria-controls="simple-menu" aria-haspopup="true" onClick={handleMenuClick} />
             <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleMenuClose}>
@@ -102,4 +102,3 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
 
 export { SidebarContext };
 export default Sidebar;
-    

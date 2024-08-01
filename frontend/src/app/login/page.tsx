@@ -3,12 +3,14 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from '../axiosInstance';
+import { useUser } from '../../context/UserContext';
 
 const LoginPage = () => {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
+  const { setUser } = useUser();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,6 +21,15 @@ const LoginPage = () => {
         throw new Error(data.error || 'Failed to login');
       }
       localStorage.setItem('token', data.token);
+
+      // Fetch user data
+      const userResponse = await axios.get('/users/me', {
+        headers: {
+          Authorization: `Bearer ${data.token}`,
+        },
+      });
+      setUser(userResponse.data);
+
       router.push('/');
     } catch (err) {
       setError((err as Error).message);

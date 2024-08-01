@@ -43,3 +43,13 @@ exports.logoutUser = (req, res) => {
   blacklist.add(token);
   res.status(200).json({ message: 'Logout successful' });
 };
+
+
+exports.getCurrentUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select('-password'); // Exclude the password field
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

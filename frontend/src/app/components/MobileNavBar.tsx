@@ -39,7 +39,7 @@ const MobileNavBar = () => {
   };
 
   const handleHowToPlayClick = () => {
-    router.push('/how-to-play'); // Adjust the path based on your routing setup
+    router.push('/how_to_play'); // Adjust the path based on your routing setup
     handleClose();
   };
 
