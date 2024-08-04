@@ -60,8 +60,8 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
           <ul className="flex-1 px-3">{children}</ul>
         </SidebarContext.Provider>
 
-        <div className="border-t flex p-3 cursor-pointer">
-          <Avatar alt={user?.username} src={user?.avatar || '/profile-icon.png'} sx={{ width: 40, height: 40 }} onClick={handleAvatarClick} />
+        <div className="border-t flex p-3">
+          <Avatar alt={user?.username} src={user?.avatar || '/profile-icon.png'} sx={{ width: 40, height: 40 }}  className="cursor-pointer" onClick={handleAvatarClick} />
           <div className={`flex justify-between items-center overflow-hidden transition-all ${expanded ? 'w-52 ml-3' : 'w-0'}`}>
             <div className="leading-4">
               <h4 className="font-semibold">{user?.username}</h4>
