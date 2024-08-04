@@ -24,22 +24,22 @@ const MobileNavBar = () => {
   };
 
   const handleProfileClick = () => {
-    router.push('/profile'); // Adjust the path based on your routing setup
+    router.push('/profile');
     handleClose();
   };
 
   const handleSettingsClick = () => {
-    router.push('/settings'); // Adjust the path based on your routing setup
+    router.push('/settings');
     handleClose();
   };
 
   const handleHomeClick = () => {
-    router.push('/'); // Adjust the path based on your routing setup
+    router.push('/');
     handleClose();
   };
 
   const handleHowToPlayClick = () => {
-    router.push('/how_to_play'); // Adjust the path based on your routing setup
+    router.push('/how_to_play');
     handleClose();
   };
 
