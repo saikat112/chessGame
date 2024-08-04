@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from '../axiosInstance';
 import { useUser } from '../../context/UserContext';
@@ -10,7 +10,13 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
-  const { setUser } = useUser();
+  const { user, setUser } = useUser();
+
+  useEffect(() => {
+    if (user) {
+      router.push('/');
+    }
+  }, [user, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +28,6 @@ const LoginPage = () => {
       }
       localStorage.setItem('token', data.token);
 
-      // Fetch user data
       const userResponse = await axios.get('/users/me', {
         headers: {
           Authorization: `Bearer ${data.token}`,

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Avatar, Menu, MenuItem, ListItemIcon } from '@mui/material';
-import { ChevronLast, ChevronFirst, Edit, LogOut } from 'lucide-react';
+import { ChevronLast, ChevronFirst, Edit, LogOut, Settings } from 'lucide-react';
 import { useState, ReactNode, MouseEvent, createContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../context/UserContext';
@@ -42,8 +42,12 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   };
 
   const handleProfileEdit = () => {
-    router.push('/profile_edit');
+    router.push('/edit_profile');
     handleMenuClose();
+  };
+
+  const handleSettingsClick = () => {
+    router.push('/settings');
   };
 
   return (
@@ -57,7 +61,15 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         </div>
 
         <SidebarContext.Provider value={{ expanded }}>
-          <ul className="flex-1 px-3">{children}</ul>
+          <ul className="flex-1 px-3">
+            {children}
+            <li className="my-2">
+              <button className="flex items-center p-2 text-gray-700 hover:bg-gray-200 rounded" onClick={handleSettingsClick}>
+                <Settings size={20} className="mr-3" />
+                {expanded && <span>Settings</span>}
+              </button>
+            </li>
+          </ul>
         </SidebarContext.Provider>
 
         <div className="border-t flex p-3">
