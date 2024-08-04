@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Avatar, Menu, MenuItem, ListItemIcon } from '@mui/material';
-import { MoreVertical, ChevronLast, ChevronFirst, Edit, LogOut } from 'lucide-react';
+import { ChevronLast, ChevronFirst, Edit, LogOut } from 'lucide-react';
 import { useState, ReactNode, MouseEvent, createContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../context/UserContext';
@@ -23,8 +23,8 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const { user, setUser } = useUser();
   const router = useRouter();
 
-  const handleMenuClick = (event: MouseEvent<SVGSVGElement>) => {
-    const target = event.currentTarget as EventTarget & SVGSVGElement;
+  const handleAvatarClick = (event: MouseEvent<HTMLElement>) => {
+    const target = event.currentTarget as EventTarget & HTMLElement;
     if (target instanceof HTMLElement) {
       setAnchorEl(target);
     }
@@ -60,25 +60,20 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
           <ul className="flex-1 px-3">{children}</ul>
         </SidebarContext.Provider>
 
-        <div className="border-t flex p-3">
-          <Avatar alt={user?.username} src={user?.avatar || '/profile-icon.png'} sx={{ width: 40, height: 40 }} />
-          <div className={`flex justify-between items-center overflow-hidden transition-all ${ expanded ? 'w-52 ml-3' : 'w-0'}`}>
+        <div className="border-t flex p-3 cursor-pointer">
+          <Avatar alt={user?.username} src={user?.avatar || '/profile-icon.png'} sx={{ width: 40, height: 40 }} onClick={handleAvatarClick} />
+          <div className={`flex justify-between items-center overflow-hidden transition-all ${expanded ? 'w-52 ml-3' : 'w-0'}`}>
             <div className="leading-4">
               <h4 className="font-semibold">{user?.username}</h4>
               <span className="text-xs text-gray-600">{user?.email}</span>
             </div>
-            <MoreVertical size={20} className="cursor-pointer" aria-controls="simple-menu" aria-haspopup="true" onClick={handleMenuClick} />
             <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleMenuClose}>
               <MenuItem onClick={handleProfileEdit}>
-                <ListItemIcon>
-                  <Edit size={20} />
-                </ListItemIcon>
+                <ListItemIcon> <Edit size={20} /> </ListItemIcon>
                 Edit Profile
               </MenuItem>
               <MenuItem onClick={handleLogout}>
-                <ListItemIcon>
-                  <LogOut size={20} />
-                </ListItemIcon>
+                <ListItemIcon> <LogOut size={20} /> </ListItemIcon>
                 Logout
               </MenuItem>
             </Menu>

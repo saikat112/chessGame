@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import ChessGame from '../components/ChessGame'; // Adjust the import path as needed
+import ChessGame from '../components/ChessGame';
 
 const GameArenaPage = () => {
   return (
