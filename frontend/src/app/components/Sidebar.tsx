@@ -63,25 +63,28 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         <SidebarContext.Provider value={{ expanded }}>
           <ul className="flex-1 px-3">
             {children}
-
           </ul>
         </SidebarContext.Provider>
 
         <div className="border-t flex p-3">
-          <Avatar alt={user?.username} src={user?.avatar || '/profile-icon.png'} sx={{ width: 40, height: 40 }}  className="cursor-pointer" onClick={handleAvatarClick} />
+          <Avatar alt={user?.username} src={user?.avatar || '/profile-icon.png'} sx={{ width: 40, height: 40 }} className="cursor-pointer" onClick={handleAvatarClick} />
           <div className={`flex justify-between items-center overflow-hidden transition-all ${expanded ? 'w-52 ml-3' : 'w-0'}`}>
             <div className="leading-4">
-              <h4 className="font-semibold">{user?.username}</h4>
-              <span className="text-xs text-gray-600">{user?.email}</span>
+              {expanded && (
+                <>
+                  <h4 className="font-semibold">{user?.username}</h4>
+                  <span className="text-xs text-gray-600">{user?.email}</span>
+                </>
+              )}
             </div>
             <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleMenuClose}>
               <MenuItem onClick={handleProfileEdit}>
                 <ListItemIcon> <Edit size={20} /> </ListItemIcon>
-                Edit Profile
+                {expanded && 'Edit Profile'}
               </MenuItem>
               <MenuItem onClick={handleLogout}>
                 <ListItemIcon> <LogOut size={20} /> </ListItemIcon>
-                Logout
+                {expanded && 'Logout'}
               </MenuItem>
             </Menu>
           </div>

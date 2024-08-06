@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useContext } from 'react';
 import { ListItem, ListItemIcon, ListItemText, Collapse, List } from '@mui/material';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
+import { SidebarContext } from './Sidebar';
 
 interface SidebarItemProps {
   icon: React.ReactNode;
@@ -15,6 +16,8 @@ interface SidebarItemProps {
 const SidebarItem: React.FC<SidebarItemProps> = ({ icon, text, path, subItems }) => {
   const [open, setOpen] = React.useState(false);
   const router = useRouter();
+  const sidebarContext = useContext(SidebarContext);
+  const expanded = sidebarContext?.expanded ?? true;
 
   const handleClick = () => {
     if (subItems) {
@@ -28,8 +31,8 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ icon, text, path, subItems })
     <>
       <ListItem button onClick={handleClick}>
         <ListItemIcon>{icon}</ListItemIcon>
-        <ListItemText primary={text} />
-        {subItems ? open ? <ExpandLess /> : <ExpandMore /> : null}
+        {expanded && <ListItemText primary={text} />}
+        {subItems && expanded ? (open ? <ExpandLess /> : <ExpandMore />) : null}
       </ListItem>
       {subItems && (
         <Collapse in={open} timeout="auto" unmountOnExit>
@@ -37,7 +40,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ icon, text, path, subItems })
             {subItems.map((subItem, index) => (
               <ListItem button key={index} onClick={() => router.push(subItem.path)}>
                 <ListItemIcon>{subItem.icon}</ListItemIcon>
-                <ListItemText primary={subItem.text} />
+                {expanded && <ListItemText primary={subItem.text} />}
               </ListItem>
             ))}
           </List>
