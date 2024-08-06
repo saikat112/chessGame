@@ -63,6 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         <SidebarContext.Provider value={{ expanded }}>
           <ul className="flex-1 px-3">
             {children}
+
           </ul>
         </SidebarContext.Provider>
 

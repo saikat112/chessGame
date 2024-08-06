@@ -16,7 +16,7 @@ const withAuth = (WrappedComponent: React.FC) => {
     }, [user, router]);
 
     if (!user) {
-      return null; // or a loading spinner, etc.
+      return null;
     }
 
     return <WrappedComponent {...props} />;
