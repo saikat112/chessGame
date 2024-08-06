@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
+import withAuth from '../../components/withAuth';
 import ChessGame from '../../components/ChessGame'; // Adjust the import path as needed
 
 const PlayWithFriendPage: React.FC = () => {
@@ -83,4 +84,4 @@ const PlayWithFriendPage: React.FC = () => {
   );
 };
 
-export default PlayWithFriendPage;
+export default withAuth(PlayWithFriendPage);
