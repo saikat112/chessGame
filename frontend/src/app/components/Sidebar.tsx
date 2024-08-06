@@ -63,12 +63,6 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         <SidebarContext.Provider value={{ expanded }}>
           <ul className="flex-1 px-3">
             {children}
-            <li className="my-2">
-              <button className="flex items-center p-2 text-gray-700 hover:bg-gray-200 rounded" onClick={handleSettingsClick}>
-                <Settings size={20} className="mr-3" />
-                {expanded && <span>Settings</span>}
-              </button>
-            </li>
           </ul>
         </SidebarContext.Provider>
 

@@ -6,8 +6,9 @@ import NavBar from './NavBar';
 import MobileNavBar from './MobileNavBar';
 import SideNavBar from './Sidebar';
 import Image from 'next/image';
+import withAuth from './withAuth';
 
-const LandingPage = () => {
+const LandingPage: React.FC = () => {
   const router = useRouter();
 
   const handlePlayOnlineClick = () => {
@@ -58,4 +59,4 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage;
+export default withAuth(LandingPage);

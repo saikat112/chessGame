@@ -2,6 +2,7 @@
 
 import React from 'react';
 import ChessboardBackgroundEdit from '../components/ChessboardBackgroundEdit';
+import withAuth from '../components/withAuth';
 
 const SettingsPage: React.FC = () => {
   return (
@@ -16,4 +17,4 @@ const SettingsPage: React.FC = () => {
   );
 };
 
-export default SettingsPage;
+export default withAuth(SettingsPage);
