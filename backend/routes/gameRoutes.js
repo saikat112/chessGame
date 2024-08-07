@@ -1,4 +1,3 @@
-// backend/routes/gameRoutes.js
 const express = require('express');
 const router = express.Router();
 const Game = require('../models/Game');
@@ -67,7 +66,8 @@ router.post('/:id/move', authenticate, async (req, res) => {
 router.post('/:id/invite', authenticate, async (req, res) => {
   try {
     const gameId = req.params.id;
-    const inviteLink = `http://localhost:3000/game_arena?gameId=${gameId}`;
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+    const inviteLink = `${baseUrl}/game_arena?gameId=${gameId}`;
     res.status(200).json({ inviteLink });
   } catch (error) {
     console.error('Error generating invite link:', error);

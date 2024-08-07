@@ -2,84 +2,103 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import axios from 'axios';
+import axiosInstance from '../../axiosInstance';
 import withAuth from '../../components/withAuth';
-import ChessGame from '../../components/ChessGame'; // Adjust the import path as needed
+import ChessGame from '../../components/ChessGame';
 
 const PlayWithFriendPage: React.FC = () => {
-  const [gameId, setGameId] = useState<string | null>(null);
+  const [gameId, setGameId] = useState<string>('');
+  const [inviteLink, setInviteLink] = useState<string>('');
   const [player, setPlayer] = useState<string>('');
   const [isJoined, setIsJoined] = useState<boolean>(false);
-  const [inviteLink, setInviteLink] = useState<string>('');
   const searchParams = useSearchParams();
 
   useEffect(() => {
     const gameIdParam = searchParams.get('gameId');
     if (gameIdParam) {
       setGameId(gameIdParam);
+      joinGame(gameIdParam);
     }
   }, [searchParams]);
 
   const createGame = async () => {
     try {
-      const response = await axios.post('/games');
-      setGameId(response.data._id);
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No token found');
+      const response = await axiosInstance.post('/games', {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      console.log(response);
+
+      const gameId = response.data._id;
+      setGameId(gameId);
+      generateInviteLink(gameId);
+
     } catch (error) {
       console.error('Error creating game:', error);
     }
   };
 
-  const generateInviteLink = async () => {
-    if (!gameId) return;
+  const generateInviteLink = async (id: string) => {
     try {
-      const response = await axios.post(`/games/${gameId}/invite`);
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No token found');
+      console.log(token);
+
+      const response = await axiosInstance.post(`/games/${id}/invite`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
       setInviteLink(response.data.inviteLink);
     } catch (error) {
       console.error('Error generating invite link:', error);
     }
   };
 
-  const joinGame = async () => {
+  const joinGame = async (id: string) => {
     try {
-      const response = await axios.post(`/games/${gameId}/join`, { player });
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No token found');
+
+      const response = await axiosInstance.post(`/games/${id}/join`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setPlayer(response.data.players.find((p: string) => p !== player));
       setIsJoined(true);
     } catch (error) {
       console.error('Error joining game:', error);
     }
   };
 
+  const copyToClipboard = () => {
+    if (inviteLink) {
+      navigator.clipboard.writeText(inviteLink);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <h1 className="text-4xl mb-4">Play with Friend</h1>
-      {!gameId ? (
+      <h1 className="text-4xl mb-4"></h1>
+      {!gameId && (
         <button onClick={createGame} className="mb-4 px-4 py-2 bg-blue-500 text-white rounded">
-          Create Game
+          Generate Invite Link
         </button>
-      ) : !isJoined ? (
-        <div className="mb-4">
-          <input
-            type="text"
-            placeholder="Enter player name"
-            value={player}
-            onChange={(e) => setPlayer(e.target.value)}
-            className="mr-2 px-2 py-1 border rounded"
-          />
-          <button onClick={joinGame} className="px-4 py-2 bg-green-500 text-white rounded">
-            Join Game
-          </button>
-          <button onClick={generateInviteLink} className="px-4 py-2 bg-yellow-500 text-white rounded ml-2">
-            Generate Invite Link
-          </button>
-          {inviteLink && (
-            <div className="mt-2">
-              <p>Invite Link:</p>
-              <a href={inviteLink} target="_blank" rel="noopener noreferrer" className="text-blue-500">{inviteLink}</a>
-            </div>
-          )}
-        </div>
-      ) : (
-        <ChessGame gameId={gameId} player={player} />
       )}
+      {inviteLink && (
+        <div className="mb-4">
+          <p>Invite Link:</p>
+          <div className="flex items-center">
+            <a href={inviteLink} target="_blank" rel="noopener noreferrer" className="text-blue-500 mr-2">
+              {inviteLink}
+            </a>
+            <button onClick={copyToClipboard} className="px-2 py-1 bg-gray-300 text-black rounded">
+              Copy
+            </button>
+          </div>
+        </div>
+      )}
+      {isJoined && <ChessGame gameId={gameId} player={player} />}
     </div>
   );
 };
