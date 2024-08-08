@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import axios from 'axios';
+import axiosInstance from '../axiosInstance';
+import axios, { AxiosError } from 'axios';
 import withAuth from '../components/withAuth';
 import ChessGame from '../components/ChessGame';
 
@@ -22,11 +23,21 @@ const GameArenaPage: React.FC = () => {
 
   const joinGame = async (id: string) => {
     try {
-      const response = await axios.post(`/games/${id}/join`); // Ensure the base URL is correct
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No token found');
+
+      const response = await axiosInstance.post(`/games/${id}/join`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       setPlayer(response.data.players.find((p: string) => p !== player)); // Set the player to the other player's ID
       setIsJoined(true);
     } catch (error) {
       console.error('Error joining game:', error);
+      if (axios.isAxiosError(error) && error.response) {
+        console.error('Response Data:', error.response.data);
+        console.error('Response Status:', error.response.status);
+        console.error('Response Headers:', error.response.headers);
+      }
     }
   };
 

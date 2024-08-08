@@ -61,11 +61,3 @@ exports.getGameHistory = async (req, res) => {
   }
 };
 
-exports.deleteAllGames = async (req, res) => {
-  try {
-    await Game.deleteMany({});
-    res.status(200).json({ message: 'All games deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error deleting games', error });
-  }
-}

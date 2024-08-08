@@ -56,7 +56,7 @@ const pieceImages: { [key: string]: string } = {
 const ChessGame: React.FC<ChessGameProps> = ({ gameId, player }) => {
   const [board, setBoard] = useState<(Piece | null)[][]>(initialBoard);
   const [selectedPiece, setSelectedPiece] = useState<[number, number] | null>(null);
-  const [turn, setTurn] = useState('w');
+  const [turn, setTurn] = useState<'white' | 'black'>('white');
   const [status, setStatus] = useState<string>('');
 
   useEffect(() => {
@@ -72,6 +72,7 @@ const ChessGame: React.FC<ChessGameProps> = ({ gameId, player }) => {
       setBoard(initialBoard);
     } catch (error) {
       console.error('Error fetching game state:', error);
+      setStatus('Error fetching game state');
     }
   };
 
@@ -79,14 +80,14 @@ const ChessGame: React.FC<ChessGameProps> = ({ gameId, player }) => {
     const initialBoard: (Piece | null)[][] = Array(8).fill(null).map(() => Array(8).fill(null));
     // Initialize pawns
     for (let i = 0; i < 8; i++) {
-      initialBoard[1][i] = { type: 'P', color: 'black' };
+      initialBoard[1][i] = { type: 'p', color: 'black' };
       initialBoard[6][i] = { type: 'P', color: 'white' };
     }
     // Initialize other pieces
-    const backRow = ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'];
+    const backRow = ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'];
     for (let i = 0; i < 8; i++) {
       initialBoard[0][i] = { type: backRow[i], color: 'black' };
-      initialBoard[7][i] = { type: backRow[i], color: 'white' };
+      initialBoard[7][i] = { type: backRow[i].toUpperCase(), color: 'white' };
     }
     return initialBoard;
   };
@@ -125,7 +126,7 @@ const ChessGame: React.FC<ChessGameProps> = ({ gameId, player }) => {
         newBoard[startX][startY] = null;
         setBoard(newBoard);
         setSelectedPiece(null);
-        setTurn(turn === 'w' ? 'b' : 'w');
+        setTurn(turn === 'white' ? 'black' : 'white');
         setStatus('Move made successfully');
       }
     } catch (error) {

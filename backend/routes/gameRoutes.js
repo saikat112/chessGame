@@ -6,7 +6,6 @@ const authenticate = require('../middleware/authenticate');
 // Create a new game
 router.post('/', authenticate, async (req, res) => {
   try {
-    console.log('Creating new game');
     const newGame = new Game({ players: [req.user.userId] });
     await newGame.save();
     console.log('New game created:', newGame);
@@ -20,7 +19,6 @@ router.post('/', authenticate, async (req, res) => {
 // Join a game
 router.post('/:id/join', authenticate, async (req, res) => {
   try {
-    console.log('Joining game:', req.params.id);
     const gameId = req.params.id;
     const player = req.user.userId;
     const game = await Game.findById(gameId);
@@ -33,11 +31,24 @@ router.post('/:id/join', authenticate, async (req, res) => {
     }
     game.players.push(player);
     await game.save();
-    console.log('Player joined game:', game);
+    console.log(`Player joined game:`, game);
     res.status(200).json(game);
   } catch (error) {
     console.error('Error joining game:', error);
     res.status(500).json({ error: 'Failed to join game' });
+  }
+});
+
+// Generate invite link
+router.post('/:id/invite', authenticate, async (req, res) => {
+  try {
+    const gameId = req.params.id;
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+    const inviteLink = `${baseUrl}/game_arena?gameId=${gameId}`;
+    res.status(200).json({ inviteLink });
+  } catch (error) {
+    console.error('Error generating invite link:', error);
+    res.status(500).json({ error: 'Failed to generate invite link' });
   }
 });
 
@@ -62,25 +73,10 @@ router.post('/:id/move', authenticate, async (req, res) => {
   }
 });
 
-// Generate invite link
-router.post('/:id/invite', authenticate, async (req, res) => {
-  try {
-    const gameId = req.params.id;
-    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
-    const inviteLink = `${baseUrl}/game_arena?gameId=${gameId}`;
-    res.status(200).json({ inviteLink });
-  } catch (error) {
-    console.error('Error generating invite link:', error);
-    res.status(500).json({ error: 'Failed to generate invite link' });
-  }
-});
-
 // Delete all games
-router.delete('/delete-all', authenticate, async (req, res) => {
+router.delete('/delete_all', authenticate, async (req, res) => {
   try {
-    console.log('Deleting all games');
     await Game.deleteMany({});
-    console.log('All games deleted');
     res.status(200).json({ message: 'All games deleted successfully' });
   } catch (error) {
     console.error('Error deleting games:', error);
