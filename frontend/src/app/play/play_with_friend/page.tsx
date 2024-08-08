@@ -11,6 +11,7 @@ const PlayWithFriendPage: React.FC = () => {
   const [inviteLink, setInviteLink] = useState<string>('');
   const [player, setPlayer] = useState<string>('');
   const [isJoined, setIsJoined] = useState<boolean>(false);
+  const [status, setStatus] = useState<string>('');
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -25,10 +26,10 @@ const PlayWithFriendPage: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No token found');
+
       const response = await axiosInstance.post('/games', {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      console.log(response);
 
       const gameId = response.data._id;
       setGameId(gameId);
@@ -36,6 +37,7 @@ const PlayWithFriendPage: React.FC = () => {
 
     } catch (error) {
       console.error('Error creating game:', error);
+      setStatus('Error creating game');
     }
   };
 
@@ -43,15 +45,16 @@ const PlayWithFriendPage: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No token found');
-      console.log(token);
 
       const response = await axiosInstance.post(`/games/${id}/invite`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       setInviteLink(response.data.inviteLink);
+      setStatus('Invite link generated successfully');
     } catch (error) {
       console.error('Error generating invite link:', error);
+      setStatus('Error generating invite link');
     }
   };
 
@@ -60,20 +63,33 @@ const PlayWithFriendPage: React.FC = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No token found');
 
+      const checkResponse = await axiosInstance.get(`/games/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const isPlayerInGame = checkResponse.data.players.includes(player);
+      if (isPlayerInGame) {
+        setStatus('You are already part of this game.');
+        return;
+      }
+
       const response = await axiosInstance.post(`/games/${id}/join`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       setPlayer(response.data.players.find((p: string) => p !== player));
       setIsJoined(true);
+      setStatus('Joined the game successfully.');
     } catch (error) {
       console.error('Error joining game:', error);
+      setStatus('Error joining game.');
     }
   };
 
   const copyToClipboard = () => {
     if (inviteLink) {
       navigator.clipboard.writeText(inviteLink);
+      setStatus('Invite link copied to clipboard');
     }
   };
 
@@ -98,7 +114,11 @@ const PlayWithFriendPage: React.FC = () => {
           </div>
         </div>
       )}
-      {isJoined && <ChessGame gameId={gameId} player={player} />}
+      {isJoined ? (
+        <ChessGame gameId={gameId} player={player} />
+      ) : (
+        <p>{status}</p>
+      )}
     </div>
   );
 };

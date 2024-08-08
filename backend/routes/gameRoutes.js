@@ -39,6 +39,21 @@ router.post('/:id/join', authenticate, async (req, res) => {
   }
 });
 
+// Check for incomplete games
+router.get('/incomplete', authenticate, async (req, res) => {
+  try {
+    const incompleteGame = await Game.findOne({
+      players: req.user.userId,
+      status: { $ne: 'complete' } // Assuming 'status' field exists and 'complete' indicates the game is finished
+    });
+
+    res.status(200).json({ incompleteGame: !!incompleteGame });
+  } catch (error) {
+    console.error('Error checking for incomplete games:', error);
+    res.status(500).json({ error: 'Failed to check for incomplete games' });
+  }
+});
+
 // Generate invite link
 router.post('/:id/invite', authenticate, async (req, res) => {
   try {

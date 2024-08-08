@@ -11,6 +11,7 @@ const GameArenaPage: React.FC = () => {
   const [gameId, setGameId] = useState<string>('');
   const [player, setPlayer] = useState<string>('');
   const [isJoined, setIsJoined] = useState<boolean>(false);
+  const [status, setStatus] = useState<string>('');
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -26,17 +27,34 @@ const GameArenaPage: React.FC = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('No token found');
 
+      // Check if the player is already in the game
+      const checkResponse = await axiosInstance.get(`/games/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const isPlayerInGame = checkResponse.data.players.includes(player);
+      if (isPlayerInGame) {
+        setStatus('You are already part of this game.');
+        return;
+      }
+
+      // If player is not already in the game, proceed to join
       const response = await axiosInstance.post(`/games/${id}/join`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
+
       setPlayer(response.data.players.find((p: string) => p !== player)); // Set the player to the other player's ID
       setIsJoined(true);
+      setStatus('Joined the game successfully.');
     } catch (error) {
       console.error('Error joining game:', error);
       if (axios.isAxiosError(error) && error.response) {
         console.error('Response Data:', error.response.data);
         console.error('Response Status:', error.response.status);
         console.error('Response Headers:', error.response.headers);
+        setStatus('Error joining game.');
+      } else {
+        setStatus('Unexpected error occurred.');
       }
     }
   };
@@ -47,7 +65,7 @@ const GameArenaPage: React.FC = () => {
       {isJoined ? (
         <ChessGame gameId={gameId} player={player} />
       ) : (
-        <p>Joining game...</p>
+        <p>{status || 'Joining game...'}</p>
       )}
     </div>
   );
