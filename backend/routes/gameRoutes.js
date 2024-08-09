@@ -39,6 +39,41 @@ router.post('/:id/join', authenticate, async (req, res) => {
   }
 });
 
+
+// cheack a game details
+router.get('/:id', authenticate, async (req, res) => {
+  try {
+    const gameId = req.params.id;
+    const player = req.user.userId;
+    const game = await Game.findById(gameId);
+
+    if (!game) {
+      console.log('Game not found:', gameId);
+      return res.status(404).json({ error: 'Game not found' });
+    }
+
+    // Check if the player is already in the game
+    if (game.players.includes(player)) {
+      return res.status(400).json({ error: 'Player is already in the game' });
+    }
+
+    // Check if the game already has 2 players
+    if (game.players.length >= 2) {
+      return res.status(400).json({ error: 'Game already has 2 players' });
+    }
+
+    // Add the player to the game
+    game.players.push(player);
+    await game.save();
+
+    console.log(`Player joined game:`, game);
+    res.status(200).json(game);
+  } catch (error) {
+    console.error('Error joining game:', error);
+    res.status(500).json({ error: 'Failed to join game' });
+  }
+});
+
 // Check for incomplete games
 router.get('/incomplete', authenticate, async (req, res) => {
   try {
@@ -89,7 +124,7 @@ router.post('/:id/move', authenticate, async (req, res) => {
 });
 
 // Delete all games
-router.delete('/delete_all', authenticate, async (req, res) => {
+router.delete('/delete_all', async (req, res) => {
   try {
     await Game.deleteMany({});
     res.status(200).json({ message: 'All games deleted successfully' });

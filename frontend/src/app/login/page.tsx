@@ -1,126 +1,80 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import axiosInstance from '../axiosInstance';
-import withAuth from '../components/withAuth';
-import ChessGame from '../components/ChessGame';
+import { useUser } from '../../context/UserContext';
 
-const PlayWithFriendPage: React.FC = () => {
-  const [gameId, setGameId] = useState<string>('');
-  const [inviteLink, setInviteLink] = useState<string>('');
-  const [player, setPlayer] = useState<string>('');
-  const [isJoined, setIsJoined] = useState<boolean>(false);
-  const [status, setStatus] = useState<string>('');
+const LoginPage = () => {
+  const [identifier, setIdentifier] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
   const searchParams = useSearchParams();
+  const { user, setUser } = useUser();
 
   useEffect(() => {
-    const gameIdParam = searchParams.get('gameId');
-    if (gameIdParam) {
-      setGameId(gameIdParam);
-      joinGame(gameIdParam);
+    if (user) {
+      const returnUrl = searchParams.get('returnUrl') || '/';
+      router.push(decodeURIComponent(returnUrl));
     }
-  }, [searchParams]);
+  }, [user, router, searchParams]);
 
-  const createGame = async () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('No token found');
-
-      // Check if the user is already in an incomplete game
-      const checkResponse = await axiosInstance.get('/games/incomplete', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      if (checkResponse.data.incompleteGame) {
-        setStatus('You are already in an incomplete game.');
-        return;
+      const response = await axiosInstance.post('/users/login', { identifier, password });
+      const data = response.data;
+      if (response.status !== 200) {
+        throw new Error(data.error || 'Failed to login');
       }
+      localStorage.setItem('token', data.token);
 
-      const response = await axiosInstance.post('/games', {}, {
-        headers: { Authorization: `Bearer ${token}` }
+      const userResponse = await axiosInstance.get('/users/me', {
+        headers: {
+          Authorization: `Bearer ${data.token}`,
+        },
       });
+      setUser(userResponse.data);
 
-      const gameId = response.data._id;
-      setGameId(gameId);
-      generateInviteLink(gameId);
-
-    } catch (error) {
-      console.error('Error creating game:', error);
-      setStatus('Error creating game');
-    }
-  };
-
-  const generateInviteLink = async (id: string) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('No token found');
-
-      const response = await axiosInstance.post(`/games/${id}/invite`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      setInviteLink(response.data.inviteLink);
-      setStatus('Invite link generated successfully');
-    } catch (error) {
-      console.error('Error generating invite link:', error);
-      setStatus('Error generating invite link');
-    }
-  };
-
-  const joinGame = async (id: string) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('No token found');
-
-      const response = await axiosInstance.post(`/games/${id}/join`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      setPlayer(response.data.players.find((p: string) => p !== player));
-      setIsJoined(true);
-      setStatus('Joined the game successfully.');
-    } catch (error) {
-      console.error('Error joining game:', error);
-      setStatus('Error joining game.');
-    }
-  };
-
-  const copyToClipboard = () => {
-    if (inviteLink) {
-      navigator.clipboard.writeText(inviteLink);
-      setStatus('Invite link copied to clipboard');
+      const returnUrl = searchParams.get('returnUrl') || '/';
+      router.push(decodeURIComponent(returnUrl));
+    } catch (err) {
+      setError((err as Error).message);
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <h1 className="text-4xl mb-4">Play with Friend</h1>
-      {!gameId && (
-        <button onClick={createGame} className="mb-4 px-4 py-2 bg-blue-500 text-white rounded">
-          Generate Invite Link
-        </button>
-      )}
-      {inviteLink && (
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Login</h1>
+      {error && <p className="text-red-500">{error}</p>}
+      <form onSubmit={handleLogin}>
         <div className="mb-4">
-          <p>Invite Link:</p>
-          <div className="flex items-center">
-            <a href={inviteLink} target="_blank" rel="noopener noreferrer" className="text-blue-500 mr-2">
-              {inviteLink}
-            </a>
-            <button onClick={copyToClipboard} className="px-2 py-1 bg-gray-300 text-black rounded">
-              Copy
-            </button>
-          </div>
+          <label className="block mb-2">Username or Email</label>
+          <input
+            type="text"
+            className="w-full p-2 border border-gray-300 rounded"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+            required
+          />
         </div>
-      )}
-      {isJoined ? (
-        <ChessGame gameId={gameId} player={player} />
-      ) : (
-        <p>{status || 'Joining game...'}</p>
-      )}
+        <div className="mb-4">
+          <label className="block mb-2">Password</label>
+          <input
+            type="password"
+            className="w-full p-2 border border-gray-300 rounded"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">
+          Login
+        </button>
+      </form>
     </div>
   );
 };
 
-export default withAuth(PlayWithFriendPage);
+export default LoginPage;
