@@ -16,11 +16,14 @@ const PlayWithFriendPage: React.FC = () => {
 
   useEffect(() => {
     const gameIdParam = searchParams.get('gameId');
-    if (gameIdParam) {
-      setGameId(gameIdParam);
-      joinGame(gameIdParam);
+    if (gameIdParam && !isJoined) {
+      setTimeout(() => {
+        setGameId(gameIdParam);
+        joinGame(gameIdParam);
+      }, 300); // Debounce time
     }
-  }, [searchParams]);
+  }, [searchParams, isJoined]);
+
 
   const createGame = async () => {
     try {

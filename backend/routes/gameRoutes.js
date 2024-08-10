@@ -21,16 +21,30 @@ router.post('/:id/join', authenticate, async (req, res) => {
   try {
     const gameId = req.params.id;
     const player = req.user.userId;
+
+    // Fetch the game
     const game = await Game.findById(gameId);
     if (!game) {
       console.log('Game not found:', gameId);
       return res.status(404).json({ error: 'Game not found' });
     }
+
+    // Check if the player is already in the game
+    if (game.players.includes(player)) {
+      console.log('Player is already in the game:', player);
+      return res.status(400).json({ error: 'Player is already in the game' });
+    }
+
+    // Check if the game already has 2 players
     if (game.players.length >= 2) {
+      console.log('Game already has 2 players');
       return res.status(400).json({ error: 'Game already has 2 players' });
     }
+
+    // Add the player to the game
     game.players.push(player);
     await game.save();
+
     console.log(`Player joined game:`, game);
     res.status(200).json(game);
   } catch (error) {

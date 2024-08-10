@@ -5,9 +5,12 @@ import LandingPage from './components/LandingPage';
 
 const HomePage = () => {
   return (
-    <div>
-      <LandingPage />
-    </div>
+    <React.StrictMode>
+      <div>
+        <LandingPage />
+      </div>
+    </React.StrictMode>
+
   );
 };
 

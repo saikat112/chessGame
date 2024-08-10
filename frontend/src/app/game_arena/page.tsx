@@ -16,11 +16,14 @@ const GameArenaPage: React.FC = () => {
 
   useEffect(() => {
     const gameIdParam = searchParams.get('gameId');
-    if (gameIdParam) {
-      setGameId(gameIdParam);
-      joinGame(gameIdParam);
+    if (gameIdParam && !isJoined) {
+      setTimeout(() => {
+        setGameId(gameIdParam);
+        joinGame(gameIdParam);
+      }, 300); // Debounce time
     }
-  }, [searchParams]);
+  }, [searchParams, isJoined]);
+
 
   const joinGame = async (id: string) => {
     try {
@@ -43,15 +46,13 @@ const GameArenaPage: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      setPlayer(response.data.players.find((p: string) => p !== player)); // Set the player to the other player's ID
+      console.log("response: ---------",response)
+      setPlayer(response.data.players.find((p: string) => p !== player));
       setIsJoined(true);
       setStatus('Joined the game successfully.');
     } catch (error) {
       console.error('Error joining game:', error);
       if (axios.isAxiosError(error) && error.response) {
-        console.error('Response Data:', error.response.data);
-        console.error('Response Status:', error.response.status);
-        console.error('Response Headers:', error.response.headers);
         setStatus('Error joining game.');
       } else {
         setStatus('Unexpected error occurred.');
