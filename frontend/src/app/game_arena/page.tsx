@@ -46,7 +46,6 @@ const GameArenaPage: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      console.log("response: ---------",response)
       setPlayer(response.data.players.find((p: string) => p !== player));
       setIsJoined(true);
       setStatus('Joined the game successfully.');

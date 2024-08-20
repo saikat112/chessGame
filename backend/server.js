@@ -8,10 +8,7 @@ const gameRoutes = require('./routes/gameRoutes');
 const { ApolloServer } = require('apollo-server-express');
 const typeDefs = require('./graphql/schema');
 const resolvers = require('./graphql/resolvers');
-const startSoapServer = require('./routes/soapServer');
-const startGrpcServer = require('./routes/grpcServer');
 require('dotenv').config();
-const cors = require('cors');
 
 const app = express();
 const server = http.createServer(app);
@@ -19,7 +16,6 @@ const io = socketIo(server);
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors());
 app.use('/api/users', userRoutes);
 app.use('/api/games', gameRoutes);
 
@@ -72,12 +68,6 @@ io.on('connection', (socket) => {
     console.log('Client disconnected');
   });
 });
-
-// Start gRPC Server
-startGrpcServer(process.env.GRPC_PORT || 50051);
-
-// Start SOAP Server
-startSoapServer(app, server);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -13,16 +13,13 @@ const PlayWithFriendPage: React.FC = () => {
   const [isJoined, setIsJoined] = useState<boolean>(false);
   const [status, setStatus] = useState<string>('');
   const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const gameIdParam = searchParams.get('gameId');
-    if (gameIdParam && !isJoined) {
-      setTimeout(() => {
-        setGameId(gameIdParam);
-        joinGame(gameIdParam);
-      }, 300); // Debounce time
-    }
-  }, [searchParams, isJoined]);
+useEffect(() => {
+  const gameIdParam = searchParams.get('gameId');
+  if (gameIdParam && !isJoined) {
+    setGameId(gameIdParam);
+    joinGame(gameIdParam);
+  }
+}, []);
 
 
   const createGame = async () => {
@@ -69,7 +66,6 @@ const PlayWithFriendPage: React.FC = () => {
       const checkResponse = await axiosInstance.get(`/games/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-
       const isPlayerInGame = checkResponse.data.players.includes(player);
       if (isPlayerInGame) {
         setStatus('You are already part of this game.');
@@ -80,7 +76,7 @@ const PlayWithFriendPage: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      setPlayer(response.data.players.find((p: string) => p !== player));
+      setPlayer(response.data.players.find((p: string) => p!== player));
       setIsJoined(true);
       setStatus('Joined the game successfully.');
     } catch (error) {

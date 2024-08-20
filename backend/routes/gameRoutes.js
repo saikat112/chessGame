@@ -16,6 +16,7 @@ router.post('/', authenticate, async (req, res) => {
   }
 });
 
+
 // Join a game
 router.post('/:id/join', authenticate, async (req, res) => {
   try {
